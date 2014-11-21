@@ -26,8 +26,8 @@ var express    = require('express')
 
 // APP CONFIG
 //==============================================================================
-app.use('/static', express.static(__dirname + '/app/static'));
-app.use('/bower', express.static(__dirname + '/app/bower_components'));
+app.use(express.static(__dirname + '/public'));
+//app.use('/bower', express.static(__dirname + '/app/bower_components'));
 
 
 // MIDDLEWARE
@@ -50,7 +50,7 @@ var models = {
 // ROUTES
 //==============================================================================
 app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/app/static/index.html');
+    res.sendFile(__dirname + '/public/index.html');
 });
 
 require('./app/routes')(express.Router(), app, models)

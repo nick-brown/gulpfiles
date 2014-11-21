@@ -13,7 +13,7 @@ var gulp = require('gulp')
 // TASKS
 //==================================================================
 gulp.task("default", function() {
-    gulp.watch("./app/static/**/*.scss", ["compile:css"]);
+    gulp.watch("./public/**/*.scss", ["compile:css"]);
     //gulp.watch("./app/**/*.*", livereload);
 });
 
@@ -32,9 +32,9 @@ gulp.task("default", function() {
 //});
 
 gulp.task("compile:css", function() {
-    return gulp.src(["./app/static/scss/*.scss"])
+    return gulp.src(["./public/scss/*.scss"])
       .pipe(sass())
       .pipe(csslint())
       .pipe(csslint.reporter())
-      .pipe(gulp.dest("./app/static/css"));
+      .pipe(gulp.dest("./public/css"));
 });
