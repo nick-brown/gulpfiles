@@ -17,8 +17,13 @@ module.exports = function(router, app, models) {
 
         // create a product (accessed at POST http://localhost:8080/api/products)
         .post(function(req, res) {
-            var product = new models.Product(); 		// create a new instance of the Todo model
-            product.name = req.body.name;  // set the products name (comes from the request)
+            // Create a new product using values from the request body
+            var product = new models.Product({
+                name: req.body.name,
+                description: req.body.description,
+                price: req.body.price,
+                category: req.body.category
+            }); 		
 
             // save the product and check for errors
             product.save(function(err) {
@@ -54,15 +59,17 @@ module.exports = function(router, app, models) {
                 if(err)
                     res.send(err);
 
-                product.title = req.body.title;
-                product.status = req.body.status;
+                product.name = req.body.name || product.name;
+                product.category = req.body.category || product.category;
+                product.price = req.body.price || product.price;
+                product.description = req.body.description || product.description;
                 product.updated = Date.now();
 
                 product.save(function(err) {
                     if(err)
                         res.send(err);
 
-                    res.json({ message: 'Todo updated successfully', doc: product });
+                    res.json({ message: 'Product updated successfully', doc: product });
                 });
             });
         })
