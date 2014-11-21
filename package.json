@@ -1,0 +1,21 @@
+{
+  "name": "secondProject",
+  "version": "0.0.0",
+  "description": "",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "body-parser": "^1.9.2",
+    "express": "^4.10.2",
+    "gulp": "^3.8.10",
+    "gulp-csslint": "^0.1.5",
+    "gulp-ruby-sass": "^0.7.1",
+    "mongoose": "^3.8.19"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
