@@ -1,9 +1,10 @@
 var gulp = require('gulp')
-//,   browserify = require('gulp-browserify')
-//,   source = require('vinyl-source-stream')
+,   browserify = require('browserify')
+,   source = require('vinyl-source-stream')
 ,   sass = require('gulp-ruby-sass')
 ,   gutil = require('gulp-util')
 ,   uglify = require('gulp-uglify')
+,   streamify = require('gulp-streamify')
 ,   concat = require('gulp-concat')
 //,   jshint = require('gulp-jshint')
 //,   stylish = require('jshint-stylish')
@@ -21,6 +22,7 @@ gulp.task("default", function() {
     //gulp.watch("./app/**/*.*", livereload);
 });
 
+
 //gulp.task("jshint", function() {
 //    return gulp.src(["./src/js/**/*.js"])
 //      .pipe(jshint())
@@ -29,9 +31,16 @@ gulp.task("default", function() {
 
 gulp.task("compile:js", function() {
     return gulp.src('./public/js/*.js')
-        .pipe(uglify())
         .pipe(concat('all.js'))
         .pipe(gulp.dest('./dist/js'));
+});
+
+gulp.task("browserify", function() {
+    return browserify('./public/js/app')
+        .bundle()
+        .pipe(source('bundle.js'))
+        .pipe(streamify(uglify()))
+        .pipe(gulp.dest('./public/dist'))
 });
 
 //gulp.task("compile:js", ["jshint"], function() {
