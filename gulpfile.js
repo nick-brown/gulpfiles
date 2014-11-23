@@ -2,12 +2,16 @@ var gulp = require('gulp')
 //,   browserify = require('gulp-browserify')
 //,   source = require('vinyl-source-stream')
 ,   sass = require('gulp-ruby-sass')
+,   gutil = require('gulp-util')
+,   uglify = require('gulp-uglify')
+,   concat = require('gulp-concat')
 //,   jshint = require('gulp-jshint')
 //,   stylish = require('jshint-stylish')
 ,   csslint = require('gulp-csslint')
 //,   livereload = require('./app/livereload')
 //,   bodyParser = require('body-parser')
 //,   db = require('./config/db');
+//
 
 
 // TASKS
@@ -23,6 +27,13 @@ gulp.task("default", function() {
 //      .pipe(jshint.reporter("jshint-stylish"))
 //});
 
+gulp.task("compile:js", function() {
+    return gulp.src('./public/js/*.js')
+        .pipe(uglify())
+        .pipe(concat('all.js'))
+        .pipe(gulp.dest('./dist/js'));
+});
+
 //gulp.task("compile:js", ["jshint"], function() {
 //    // single point of entry for app
 //    var bundle = browserify("./src/js/main.js").bundle();
@@ -33,8 +44,8 @@ gulp.task("default", function() {
 
 gulp.task("compile:css", function() {
     return gulp.src(["./public/scss/*.scss"])
-      .pipe(sass())
-      .pipe(csslint())
-      .pipe(csslint.reporter())
-      .pipe(gulp.dest("./public/css"));
+        .pipe(sass())
+        .pipe(csslint())
+        .pipe(csslint.reporter())
+        .pipe(gulp.dest("./public/css"));
 });
