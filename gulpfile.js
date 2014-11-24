@@ -6,8 +6,8 @@ var gulp = require('gulp')
 ,   uglify = require('gulp-uglify')
 ,   streamify = require('gulp-streamify')
 ,   concat = require('gulp-concat')
-//,   jshint = require('gulp-jshint')
-//,   stylish = require('jshint-stylish')
+,   jshint = require('gulp-jshint')
+,   stylish = require('jshint-stylish')
 ,   csslint = require('gulp-csslint')
 //,   livereload = require('./app/livereload')
 //,   bodyParser = require('body-parser')
@@ -19,23 +19,23 @@ var gulp = require('gulp')
 //==================================================================
 gulp.task("default", function() {
     gulp.watch("./public/**/*.scss", ["compile:css"]);
+    gulp.watch("./public/js/*.js", ["browserify"]);
     //gulp.watch("./app/**/*.*", livereload);
 });
 
-
-//gulp.task("jshint", function() {
-//    return gulp.src(["./src/js/**/*.js"])
-//      .pipe(jshint())
-//      .pipe(jshint.reporter("jshint-stylish"))
-//});
-
-gulp.task("compile:js", function() {
-    return gulp.src('./public/js/*.js')
-        .pipe(concat('all.js'))
-        .pipe(gulp.dest('./dist/js'));
+gulp.task("jshint", function() {
+    return gulp.src(["./public/js/**/*.js"])
+      .pipe(jshint())
+      .pipe(jshint.reporter("jshint-stylish"))
 });
 
-gulp.task("browserify", function() {
+//gulp.task("compile:js", function() {
+//    return gulp.src('./public/js/*.js')
+//        .pipe(concat('all.js'))
+//        .pipe(gulp.dest('./dist/js'));
+//});
+
+gulp.task("browserify", ["jshint"], function() {
     return browserify('./public/js/app')
         .bundle()
         .pipe(source('bundle.js'))
