@@ -1,7 +1,17 @@
+/*globals angular*/
+'use strict';
+
 require('../bower_components/angular/angular');
 
-var sportStore = angular.module("sportStore", []);
+var app = angular.module('sportStore', []);
+var mainController = require('./mainController');
+var fun = function($scope) {
+    $scope.name = 'Nick';
+    $scope.model = {
+        name: 'Nick'
+    };
+};
 
-sportStore.controller("MainCtrl", function($scope) {
+var fun2 = require('./mainController')();
 
-});
+app.controller('MainCtrl', ['$scope', fun2]);
