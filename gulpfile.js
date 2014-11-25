@@ -1,51 +1,50 @@
 var gulp = require('gulp')
-//,   browserify = require('gulp-browserify')
-//,   source = require('vinyl-source-stream')
+,   browserify = require('browserify')
+,   source = require('vinyl-source-stream')
 ,   sass = require('gulp-ruby-sass')
 ,   gutil = require('gulp-util')
 ,   uglify = require('gulp-uglify')
+,   streamify = require('gulp-streamify')
 ,   concat = require('gulp-concat')
-//,   jshint = require('gulp-jshint')
-//,   stylish = require('jshint-stylish')
+,   jshint = require('gulp-jshint')
+,   stylish = require('jshint-stylish')
 ,   csslint = require('gulp-csslint')
-//,   livereload = require('./app/livereload')
+,   livereload = require('gulp-livereload');
 //,   bodyParser = require('body-parser')
 //,   db = require('./config/db');
-//
 
 
 // TASKS
 //==================================================================
-gulp.task("default", function() {
-    gulp.watch("./public/**/*.scss", ["compile:css"]);
-    //gulp.watch("./app/**/*.*", livereload);
+gulp.task('default', ['compile:js', 'compile:css', 'watch']);
+
+gulp.task('watch', function() {
+    var server = livereload();
+
+    gulp.watch('./public/**/*.scss', ['compile:css']);
+    gulp.watch('./public/js/*.js', ['compile:js']);
 });
 
-//gulp.task("jshint", function() {
-//    return gulp.src(["./src/js/**/*.js"])
-//      .pipe(jshint())
-//      .pipe(jshint.reporter("jshint-stylish"))
-//});
-
-gulp.task("compile:js", function() {
-    return gulp.src('./public/js/*.js')
-        .pipe(uglify())
-        .pipe(concat('all.js'))
-        .pipe(gulp.dest('./dist/js'));
+gulp.task('jshint', function() {
+    return gulp.src(['./public/js/**/*.js'])
+      .pipe(jshint())
+      .pipe(jshint.reporter('jshint-stylish'))
 });
 
-//gulp.task("compile:js", ["jshint"], function() {
-//    // single point of entry for app
-//    var bundle = browserify("./src/js/main.js").bundle();
-//    return bundle
-//      .pipe(source("bundle.js"))
-//      .pipe(gulp.dest("./public/static/js/"));
-//});
+gulp.task('compile:js', ['jshint'], function() {
+    return browserify('./public/js/app')
+        .bundle()
+        .pipe(source('bundle.js'))
+        .pipe(streamify(uglify()))
+        .pipe(gulp.dest('./public/dist'))
+        .pipe(livereload());
+});
 
-gulp.task("compile:css", function() {
-    return gulp.src(["./public/scss/*.scss"])
+gulp.task('compile:css', function() {
+    return gulp.src(['./public/scss/*.scss'])
         .pipe(sass())
         .pipe(csslint())
         .pipe(csslint.reporter())
-        .pipe(gulp.dest("./public/css"));
+        .pipe(gulp.dest('./public/css'))
+        .pipe(livereload());
 });
