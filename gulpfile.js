@@ -14,13 +14,14 @@ var gulp = require('gulp')
 
 // TASKS
 //==============================================================================
-gulp.task('default', ['compile:js', 'compile:css', 'watch']);
+gulp.task('default', ['compile:js', 'compile:css', 'publish', 'watch']);
 
 gulp.task('watch', function() {
     var server = livereload();
 
     gulp.watch('./public/**/*.scss', ['compile:css']);
     gulp.watch('./public/js/*.js', ['compile:js']);
+    gulp.watch('./public/index.html', ['publish']);
 });
 
 gulp.task('jshint', function() {
@@ -29,12 +30,18 @@ gulp.task('jshint', function() {
       .pipe(jshint.reporter('jshint-stylish'))
 });
 
+gulp.task('publish', function() {
+    return gulp.src(['./public/index.html'])
+        .pipe(gulp.dest('./dist/'))
+        .pipe(livereload());
+});
+
 gulp.task('compile:js', ['jshint'], function() {
     return browserify('./public/js/app')
         .bundle()
         .pipe(source('bundle.js'))
         .pipe(streamify(uglify()))
-        .pipe(gulp.dest('./public/dist'))
+        .pipe(gulp.dest('./dist/js'))
         .pipe(livereload());
 });
 
@@ -43,6 +50,6 @@ gulp.task('compile:css', function() {
         .pipe(sass())
         .pipe(csslint())
         .pipe(csslint.reporter())
-        .pipe(gulp.dest('./public/css'))
+        .pipe(gulp.dest('./dist/css'))
         .pipe(livereload());
 });

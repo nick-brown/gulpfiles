@@ -5,3 +5,4 @@ node_modules/
 *.swo
 app/static/css/
 public/dist/
+dist/
