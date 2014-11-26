@@ -26,7 +26,7 @@ var express    = require('express')
 
 // APP CONFIG
 //==============================================================================
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/dist'));
 //app.use('/bower', express.static(__dirname + '/app/bower_components'));
 
 
@@ -50,7 +50,7 @@ var models = {
 // ROUTES
 //==============================================================================
 app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/dist/index.html');
+    res.sendFile('./dist/index.html');
 });
 
 require('./app/routes')(express.Router(), app, models)

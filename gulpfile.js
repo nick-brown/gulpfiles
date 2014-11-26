@@ -14,7 +14,7 @@ var gulp = require('gulp')
 
 // TASKS
 //==============================================================================
-gulp.task('default', ['compile:js', 'compile:css', 'publish', 'watch']);
+gulp.task('default', ['compile:js', 'compile:css', 'compile:bower', 'publish', 'watch']);
 
 gulp.task('watch', function() {
     var server = livereload();
@@ -33,6 +33,12 @@ gulp.task('jshint', function() {
 gulp.task('publish', function() {
     return gulp.src(['./public/index.html'])
         .pipe(gulp.dest('./dist/'))
+        .pipe(livereload());
+});
+
+gulp.task('compile:bower', function() {
+    return gulp.src(['./public/bower_components/**/*.min.css'])
+        .pipe(gulp.dest('./dist/vendor'))
         .pipe(livereload());
 });
 
