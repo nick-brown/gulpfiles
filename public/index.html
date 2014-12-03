@@ -9,8 +9,25 @@
 </head>
 <body>
     <div id="container" ng-controller="MainCtrl">
-        {{name}}
-        {{model.name}}
+        <div class="navbar navbar-inverse">
+            <a class="navbar-brand" href="#">SPORTS STORE</a>
+        </div>
+        <div class="panel panel-default row">
+            <div class="col-xs-3">
+                Categories go here
+            </div>
+            <div class="col-xs-8">
+                <div class="well" ng-repeat="item in data.products">
+                    <h3>
+                        <strong>{{item.name}}</strong>
+                        <span class="pull-right label label-primary">
+                            {{item.price | currency}}
+                        </span>
+                    </h3>
+                    <span class="lead">{{item.description}}</span>
+                </div>
+            </div>
+        </div>
     </div>
     <script type="text/javascript" src="js/bundle.js"></script>
 </body>
