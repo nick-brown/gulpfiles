@@ -20,7 +20,7 @@ gulp.task('watch', function() {
     var server = livereload();
 
     gulp.watch('./public/**/*.scss', ['compile:css']);
-    gulp.watch('./public/js/*.js', ['compile:js']);
+    gulp.watch('./public/js/**/*.js', ['compile:js']);
     gulp.watch('./public/index.html', ['publish']);
 });
 
