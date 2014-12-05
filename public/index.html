@@ -12,9 +12,8 @@
         <div class="navbar navbar-inverse">
             <a class="navbar-brand" href="#">SPORTS STORE</a>
         </div>
-        <div class="panel panel-default row">
+        <div class="panel panel-default row" ng-controller="ProductListCtrl">
             <div class="col-xs-3">
-                Categories go here
                 <a ng-click="selectCategory()" class="btn btn-block btn-default btn-lg">
                     Home
                 </a>
@@ -24,7 +23,7 @@
                 </a>
             </div>
             <div class="col-xs-8">
-                <div class="well" ng-repeat="item in data.products">
+                <div class="well" ng-repeat="item in data.products | filter:categoryFilterFn">
                     <h3>
                         <strong>{{item.name}}</strong>
                         <span class="pull-right label label-primary">
