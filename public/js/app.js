@@ -3,11 +3,12 @@
 
 require('angular');
 
-var app = angular.module('sportStore', []);
+// Modules
+var app = angular.module('sportStore', ['customFilters']);
+var customFilters = angular.module('customFilters', []);
 
 // Controllers
 app.controller('MainCtrl', ['$scope', require('./controllers/mainController')]);
 
 // Filters
-//angular.module('customFilters', []).filter('uniq', require('./filters/customFilters.js'));
-app.filter('unique', require('./filters/customFilters.js'));
+customFilters.filter('unique', require('./filters/customFilters.js'));

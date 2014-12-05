@@ -1,4 +1,7 @@
-module.exports = function($scope) {
+/*globals angular*/
+require('angular');
+
+module.exports = function() {
     'use strict';
     return function (data, propertyName) {
         if(angular.isArray(data) && angular.isString(propertyName)) {
@@ -16,5 +19,5 @@ module.exports = function($scope) {
         } else {
             return data;
         }
-    }
+    };
 };
