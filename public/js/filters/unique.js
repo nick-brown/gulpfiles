@@ -16,8 +16,8 @@ module.exports = function() {
             }
 
             return results;
-        } else {
-            return data;
         }
+
+        return data;
     };
 };
