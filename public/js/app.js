@@ -9,7 +9,7 @@ var customFilters = angular.module('customFilters', []);
 
 // Controllers
 app
-    .controller('MainCtrl', ['$scope', require('./controllers/mainController')])
+    .controller('MainCtrl', ['$scope', '$http', 'dataUrl', require('./controllers/mainController')])
     .controller('ProductListCtrl', [
         '$scope',
         '$filter',
@@ -21,6 +21,7 @@ app
 // Constants
 app
     .constant('productListPageCount', 3)
+    .constant('dataUrl', 'http://localhost:8080/api/products')
     .constant('productListActiveClass', 'btn-primary');
 
 // Filters
