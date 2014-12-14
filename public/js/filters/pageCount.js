@@ -12,7 +12,7 @@ module.exports = function() {
 
             return result;
         } else {
-            return data
+            return data;
         }
     };
 };

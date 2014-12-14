@@ -4,7 +4,7 @@ module.exports = function($scope, $filter, productListActiveClass, productListPa
     var selectedCategory = null;
 
     $scope.selectCategory = function(newCategory) {
-        selectedCategory = newCategory; 
+        selectedCategory = newCategory || null;
         $scope.selectedPage = 1;
     };
 
@@ -14,7 +14,7 @@ module.exports = function($scope, $filter, productListActiveClass, productListPa
 
     $scope.getCategoryClass = function(category) {
         return selectedCategory === category ? productListActiveClass : '';
-    }
+    };
 
     $scope.selectPage = function(newPage) {
         $scope.selectedPage = newPage;
