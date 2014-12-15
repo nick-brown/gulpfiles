@@ -4,8 +4,9 @@
 require('angular');
 
 // Modules
-var app = angular.module('sportStore', ['customFilters']);
-var customFilters = angular.module('customFilters', []);
+var app = angular.module('sportStore', ['customFilters', 'cart'])
+,   customFilters = angular.module('customFilters', [])
+,   cart = require('./components/cart/cart');
 
 // Controllers
 app
