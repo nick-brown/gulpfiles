@@ -31,7 +31,7 @@ gulp.task('jshint', function() {
 });
 
 gulp.task('publish', function() {
-    return gulp.src(['./public/index.html'])
+    return gulp.src(['./public/**/*.html', '!./public/bower_components/**/*.html'])
         .pipe(gulp.dest('./dist/'))
         .pipe(livereload());
 });
