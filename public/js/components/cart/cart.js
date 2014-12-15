@@ -3,7 +3,6 @@ require('angular');
 
 module.exports = angular.module('cart', [])
         .factory('cart', function() {
-            'use strict';
             var cartData = [];
 
             return {
@@ -36,12 +35,11 @@ module.exports = angular.module('cart', [])
                 }
             };
         })
-        .directive('cartSummary', function(cart) {
-            'use strict';
+        .directive('cartSummary', ['cart', function(cart) {
             return {
                 restrict: 'E',
-                templateUrl: 'js/components/cart/cartSummary.html',
-                controller: function($scope) {
+                templateUrl: './js/components/cart/cartSummary.html',
+                controller: ['$scope', function($scope) {
                     var cartData = cart.getProducts();
 
                     $scope.total = function() {
@@ -61,6 +59,6 @@ module.exports = angular.module('cart', [])
 
                         return totalItems;
                     };
-                }
+                }]
             };
-        });
+        }]);

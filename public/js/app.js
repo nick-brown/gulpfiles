@@ -19,8 +19,11 @@ app
         require('./controllers/productListControllers')
     ]);
 
+
 // Constants
 app
     .constant('productListPageCount', 3)
     .constant('dataUrl', 'http://localhost:8080/api/products')
     .constant('productListActiveClass', 'btn-primary');
+
+console.log(app._invokeQueue);
