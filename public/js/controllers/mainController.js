@@ -6,7 +6,10 @@ module.exports = function($scope, $http, dataUrl) {
         .success(function(data) {
             $scope.data.products = data;
         })
-        .error(function(error) {
-            $scope.data.error = error;
+        .error(function(message, httpStatus) {
+            $scope.data.error = {
+                'status': httpStatus,
+                'message': message
+            };
         });
 };

@@ -12,7 +12,13 @@
         <div class="navbar navbar-inverse">
             <a class="navbar-brand" href="#">SPORTS STORE</a>
         </div>
-        <div class="panel panel-default row" ng-controller="ProductListCtrl">
+
+        <div class="alert alert-danger" ng-show="data.error">
+            Error ({{data.error.status}}).  The product data was not loaded.
+            <a href="/" class="alert-link">Click here to try again</a>
+        </div>
+
+        <div class="panel panel-default row" ng-controller="ProductListCtrl" ng-hide="data.error">
             <div class="col-xs-3">
                 <a ng-click="selectCategory()" class="btn btn-block btn-default btn-lg">
                     Home
