@@ -10,7 +10,9 @@ var gulp = require('gulp')
 ,   stylish = require('jshint-stylish')
 ,   csslint = require('gulp-csslint')
 ,   livereload = require('gulp-livereload')
-,   jade = require('gulp-jade');
+,   jade = require('gulp-jade')
+,   rev = require('gulp-rev')
+,   buffer = require('gulp-buffer');
 
 
 // TASKS
@@ -40,7 +42,7 @@ gulp.task('publish', function() {
 
 gulp.task('jade', function() {
     return gulp.src('./public/**/*.jade')
-        .pipe(jade({ pretty: true }))
+        .pipe(jade())
         .pipe(gulp.dest('./dist/'))
         .pipe(livereload());
 });
@@ -56,7 +58,13 @@ gulp.task('compile:js', ['jshint'], function() {
         .bundle()
         .pipe(source('bundle.js'))
         .pipe(streamify(uglify()))
+        .pipe(buffer())
+        .pipe(rev())
         .pipe(gulp.dest('./dist/js'))
+        
+        // build manifest
+        //.pipe(rev.manifest())
+        //.pipe(gulp.dest('./dist/js'))
         .pipe(livereload());
 });
 
