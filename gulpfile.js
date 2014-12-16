@@ -12,12 +12,13 @@ var gulp = require('gulp')
 ,   livereload = require('gulp-livereload')
 ,   jade = require('gulp-jade')
 ,   rev = require('gulp-rev')
-,   buffer = require('gulp-buffer');
+,   buffer = require('gulp-buffer')
+,   usemin = require('gulp-usemin');
 
 
 // TASKS
 //==============================================================================
-gulp.task('default', ['compile:js', 'compile:css', 'compile:bower', 'publish', 'jade', 'watch']);
+gulp.task('default', ['compile:js', 'compile:css', 'compile:bower', 'publish', 'compile:jade', 'watch']);
 
 gulp.task('watch', function() {
     var server = livereload();
@@ -40,7 +41,7 @@ gulp.task('publish', function() {
         .pipe(livereload());
 });
 
-gulp.task('jade', function() {
+gulp.task('compile:jade', function() {
     return gulp.src('./public/**/*.jade')
         .pipe(jade())
         .pipe(gulp.dest('./dist/'))
