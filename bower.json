@@ -19,7 +19,6 @@
     "tests"
   ],
   "dependencies": {
-    "bootstrap-sass": "~3.0.2",
     "bootstrap": "~3.3.1"
   }
 }
