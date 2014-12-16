@@ -74,6 +74,8 @@ gulp.task('compile:css', function() {
         .pipe(sass())
         .pipe(csslint())
         .pipe(csslint.reporter())
+        .pipe(buffer())
+        .pipe(rev())
         .pipe(gulp.dest('./dist/css'))
         .pipe(livereload());
 });
