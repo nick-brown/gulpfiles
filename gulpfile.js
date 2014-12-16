@@ -9,12 +9,13 @@ var gulp = require('gulp')
 ,   jshint = require('gulp-jshint')
 ,   stylish = require('jshint-stylish')
 ,   csslint = require('gulp-csslint')
-,   livereload = require('gulp-livereload');
+,   livereload = require('gulp-livereload')
+,   jade = require('gulp-jade');
 
 
 // TASKS
 //==============================================================================
-gulp.task('default', ['compile:js', 'compile:css', 'compile:bower', 'publish', 'watch']);
+gulp.task('default', ['compile:js', 'compile:css', 'compile:bower', 'publish', 'jade', 'watch']);
 
 gulp.task('watch', function() {
     var server = livereload();
@@ -22,16 +23,24 @@ gulp.task('watch', function() {
     gulp.watch('./public/**/*.scss', ['compile:css']);
     gulp.watch('./public/js/**/*.js', ['compile:js']);
     gulp.watch('./public/index.html', ['publish']);
+    gulp.watch('./public/**/*.jade', ['jade']);
 });
 
 gulp.task('jshint', function() {
     return gulp.src(['./public/js/**/*.js'])
-      .pipe(jshint())
-      .pipe(jshint.reporter('jshint-stylish'))
+        .pipe(jshint())
+        .pipe(jshint.reporter('jshint-stylish'));
 });
 
 gulp.task('publish', function() {
     return gulp.src(['./public/**/*.html', '!./public/bower_components/**/*.html'])
+        .pipe(gulp.dest('./dist/'))
+        .pipe(livereload());
+});
+
+gulp.task('jade', function() {
+    return gulp.src('./public/**/*.jade')
+        .pipe(jade({ pretty: true }))
         .pipe(gulp.dest('./dist/'))
         .pipe(livereload());
 });
