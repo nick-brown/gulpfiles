@@ -3,9 +3,14 @@
 <head>
    <meta charset="UTF-8">
    <title></title>
-   <link href="vendor/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-   <link href="vendor/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet">
-   <link href="css/main.css" rel="stylesheet">
+   <!-- build:css css/bootstrap.css -->
+   <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+   <link href="bower_components/bootstrap/dist/css/bootstrap-theme.css" rel="stylesheet">
+   <!-- endbuild -->
+
+   <!-- build:sass css/styles.css -->
+   <link href="scss/main.scss" rel="stylesheet">
+   <!-- endbuild -->
 </head>
 <body>
     <div id="container" ng-controller="MainCtrl">
@@ -21,6 +26,11 @@
 
         <ng-include src="'js/views/productList.html'"></ng-include>
     </div>
-    <script type="text/javascript" src="js/bundle.js"></script>
+
+    <!-- build:js js/app.js -->
+    <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript" src="js/filters/pageCount.js"></script>
+    <script type="text/javascript" src="js/filters/range.js"></script>
+    <!-- endbuild -->
 </body>
 </html>

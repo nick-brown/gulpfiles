@@ -87,19 +87,29 @@ gulp.task('compile:bower', function() {
 });
 
 gulp.task('compile:js', ['jshint'], function() {
-    return browserify( POINT_OF_ENTRY )
-        .bundle()
-        .pipe( source('bundle.js') ) 
-        .pipe( streamify(uglify()) )
-        .pipe( buffer() )
-        .pipe( rev() )
-        .pipe( gulp.dest(PATHS.dest.js) )
-        
-        // build manifest
-        //.pipe(rev.manifest())
-        //.pipe(gulp.dest('./dist/js'))
-        .pipe( livereload() );
+    return gulp.src( PUBLIC + '/index.html')
+        .pipe( usemin({
+            js: [uglify(), rev()],
+            css: [csslint(), csslint.reporter(), rev()],
+            sass: [sass(), csslint(), csslint.reporter(), rev()]
+        }))
+        .pipe( gulp.dest(DIST) );
 });
+
+//gulp.task('compile:js', ['jshint'], function() {
+//    return browserify( POINT_OF_ENTRY )
+//        .bundle()
+//        .pipe( source('bundle.js') ) 
+//        .pipe( streamify(uglify()) )
+//        .pipe( buffer() )
+//        .pipe( rev() )
+//        .pipe( gulp.dest(PATHS.dest.js) )
+//        
+//        // build manifest
+//        //.pipe(rev.manifest())
+//        //.pipe(gulp.dest('./dist/js'))
+//        .pipe( livereload() );
+//});
 
 gulp.task('compile:css', function() {
     return gulp.src( PATHS.src.scss )
