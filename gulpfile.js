@@ -16,66 +16,98 @@ var gulp = require('gulp')
 ,   usemin = require('gulp-usemin');
 
 
+// CONSTANTS
+//==============================================================================
+
+var PUBLIC = __dirname + '/public'
+,   DIST = __dirname + '/dist'
+,   POINT_OF_ENTRY = PUBLIC + '/js/app'
+,   BOWER_HOME = PUBLIC + '/bower_components';
+
+var PATHS = {
+    src: {
+        scss: PUBLIC + '/scss/*.scss',
+        js: PUBLIC + '/js/**/*.js',
+        jade: PUBLIC + '/**/*.jade',
+        html: PUBLIC + '/**/*.html',
+        bower: BOWER_HOME + '**/*.css'
+    },
+
+    dest: {
+        css: DIST + '/css' ,
+        js: DIST + '/js',
+        vendor: DIST + '/vendor'
+    }
+};
+
+
 // TASKS
 //==============================================================================
-gulp.task('default', ['compile:js', 'compile:css', 'compile:bower', 'publish', 'compile:jade', 'watch']);
+gulp.task('default', [
+  'compile:js',
+  'compile:css',
+  'compile:bower',
+  'publish',
+  'compile:jade',
+  'watch'
+]);
 
 gulp.task('watch', function() {
     var server = livereload();
 
-    gulp.watch('./public/**/*.scss', ['compile:css']);
-    gulp.watch('./public/js/**/*.js', ['compile:js']);
-    gulp.watch('./public/index.html', ['publish']);
-    gulp.watch('./public/**/*.jade', ['jade']);
+    gulp.watch(PATHS.src.scss, ['compile:css']);
+    gulp.watch(PATHS.src.js, ['compile:js']);
+    gulp.watch(PATHS.src.html, ['publish']);
+    gulp.watch(PATHS.src.jade, ['jade']);
 });
 
 gulp.task('jshint', function() {
-    return gulp.src(['./public/js/**/*.js'])
-        .pipe(jshint())
-        .pipe(jshint.reporter('jshint-stylish'));
+    return gulp.src( PATHS.src.js )
+        .pipe( jshint() )
+        .pipe( jshint.reporter('jshint-stylish') );
 });
 
 gulp.task('publish', function() {
-    return gulp.src(['./public/**/*.html', '!./public/bower_components/**/*.html'])
-        .pipe(gulp.dest('./dist/'))
-        .pipe(livereload());
+    return gulp.src( PATHS.src.html )
+        .pipe( gulp.dest(DIST) )
+        .pipe( livereload() );
 });
 
 gulp.task('compile:jade', function() {
-    return gulp.src('./public/**/*.jade')
-        .pipe(jade())
-        .pipe(gulp.dest('./dist/'))
-        .pipe(livereload());
+    return gulp.src( PATHS.src.jade )
+        .pipe( jade() )
+        .pipe( gulp.dest(DIST) )
+        .pipe( livereload() );
 });
 
 gulp.task('compile:bower', function() {
-    return gulp.src(['./public/bower_components/**/*.min.css'])
-        .pipe(gulp.dest('./dist/vendor'))
-        .pipe(livereload());
+    return gulp.src( PATHS.src.bower )
+        .pipe( gulp.dest(PATHS.dest.vendor) )
+        .pipe( livereload() );
 });
 
 gulp.task('compile:js', ['jshint'], function() {
-    return browserify('./public/js/app')
+    return browserify( POINT_OF_ENTRY )
         .bundle()
-        .pipe(source('bundle.js'))
-        .pipe(streamify(uglify()))
-        .pipe(buffer())
-        .pipe(rev())
-        .pipe(gulp.dest('./dist/js'))
+        .pipe( source('bundle.js') ) 
+        .pipe( streamify(uglify()) )
+        .pipe( buffer() )
+        .pipe( rev() )
+        .pipe( gulp.dest(PATHS.dest.js) )
         
         // build manifest
         //.pipe(rev.manifest())
         //.pipe(gulp.dest('./dist/js'))
-        .pipe(livereload());
+        .pipe( livereload() );
 });
 
 gulp.task('compile:css', function() {
-    return gulp.src(['./public/scss/*.scss'])
-        .pipe(sass())
-        .pipe(csslint())
-        .pipe(csslint.reporter())
-        .pipe(buffer())
-        .pipe(rev())
-        .pipe(gulp.dest('./dist/css'))
-        .pipe(livereload());
+    return gulp.src( PATHS.src.scss )
+        .pipe( sass() )
+        .pipe( csslint() )
+        .pipe( csslint.reporter() )
+        .pipe( buffer() )
+        .pipe( rev() )
+        .pipe( gulp.dest(PATHS.dest.css) )
+        .pipe( livereload() );
 });
