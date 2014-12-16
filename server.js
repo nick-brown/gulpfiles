@@ -11,8 +11,9 @@ var express    = require('express')
 // APP CONFIG
 //==============================================================================
 app.use(express.static(__dirname + '/dist'));
-//app.use('/bower', express.static(__dirname + '/app/bower_components'));
 
+app.set('views', __dirname);
+app.set('view engine', 'jade');
 
 // MIDDLEWARE
 //==============================================================================
@@ -36,9 +37,14 @@ var models = {
 
 // ROUTES
 //==============================================================================
-app.get('/', function(req, res) {
-    res.sendFile('./dist/index.html');
-});
+app
+  .get('/', function(req, res) {
+      res.sendFile(__dirname + '/dist/index.html');
+  })
+
+  .get('/test', function(req, res) {
+      res.sendFile(__dirname + '/dist/test.html');
+  });
 
 app.get('/test', function(req, res) {
     res.render('views/tester', { title: 'My Thing'});
