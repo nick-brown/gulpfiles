@@ -3,14 +3,9 @@
 <head>
    <meta charset="UTF-8">
    <title></title>
-   <!-- build:css css/bootstrap.css -->
-   <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
-   <link href="bower_components/bootstrap/dist/css/bootstrap-theme.css" rel="stylesheet">
-   <!-- endbuild -->
 
-   <!-- build:sass css/styles.css -->
-   <link href="scss/main.scss" rel="stylesheet">
-   <!-- endbuild -->
+   <!-- inject:css -->
+   <!-- endinject -->
 </head>
 <body>
     <div id="container" ng-controller="MainCtrl">
@@ -27,8 +22,7 @@
         <ng-include src="'js/views/productList.html'"></ng-include>
     </div>
 
-    <!-- build:js js/app.js -->
-    <script type="text/javascript" src="js/bundle.js"></script>
-    <!-- endbuild -->
+    <!-- inject:js -->
+    <!-- endinject -->
 </body>
 </html>
