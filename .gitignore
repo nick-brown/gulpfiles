@@ -1,9 +1,8 @@
 .sass-cache/
-app/bower_components/
+*/bower_components/
 node_modules/
 *.swp
 *.swo
 app/static/css/
 public/dist/
 dist/
-public/js/bundle.js
