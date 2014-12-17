@@ -6,3 +6,4 @@ node_modules/
 app/static/css/
 public/dist/
 dist/
+public/js/bundle.js

@@ -13,7 +13,8 @@ var gulp = require('gulp')
 ,   jade = require('gulp-jade')
 ,   rev = require('gulp-rev')
 ,   buffer = require('gulp-buffer')
-,   usemin = require('gulp-usemin');
+,   usemin = require('gulp-usemin')
+,   mincss = require('gulp-minify-css');
 
 
 // CONSTANTS
@@ -86,14 +87,22 @@ gulp.task('compile:bower', function() {
         .pipe( livereload() );
 });
 
-gulp.task('compile:js', ['jshint'], function() {
-    return gulp.src( PUBLIC + '/index.html')
-        .pipe( usemin({
-            js: [uglify(), rev()],
-            css: [csslint(), csslint.reporter(), rev()],
-            sass: [sass(), csslint(), csslint.reporter(), rev()]
-        }))
-        .pipe( gulp.dest(DIST) );
+
+gulp.task('build', ['jshint'], function() {
+    return browserify( POINT_OF_ENTRY )
+        .bundle()
+        .pipe( source('bundle.js') )
+        .pipe( streamify(uglify()) )
+        .pipe( gulp.dest('./public/js') )
+        .on('end', function() {
+            gulp.src( PUBLIC + '/index.html')
+            .pipe( usemin({
+                js: [rev()],
+                css: [csslint(), csslint.reporter(), mincss(), rev()],
+                sass: [sass(), csslint(), csslint.reporter(), rev()]
+            }))
+            .pipe( gulp.dest(DIST) );
+        });
 });
 
 //gulp.task('compile:js', ['jshint'], function() {
@@ -111,13 +120,13 @@ gulp.task('compile:js', ['jshint'], function() {
 //        .pipe( livereload() );
 //});
 
-gulp.task('compile:css', function() {
-    return gulp.src( PATHS.src.scss )
-        .pipe( sass() )
-        .pipe( csslint() )
-        .pipe( csslint.reporter() )
-        .pipe( buffer() )
-        .pipe( rev() )
-        .pipe( gulp.dest(PATHS.dest.css) )
-        .pipe( livereload() );
-});
+//gulp.task('compile:css', function() {
+//    return gulp.src( PATHS.src.scss )
+//        .pipe( sass() )
+//        .pipe( csslint() )
+//        .pipe( csslint.reporter() )
+//        .pipe( buffer() )
+//        .pipe( rev() )
+//        .pipe( gulp.dest(PATHS.dest.css) )
+//        .pipe( livereload() );
+//});
