@@ -30,17 +30,17 @@ var PUBLIC         = __dirname + '/public'
 
 var PATHS = {
     src: {
-        scss: PUBLIC + '/scss/*.scss',
-        js: PUBLIC + '/js/**/*.js',
-        jade: PUBLIC + '/**/*.jade',
-        html: PUBLIC + '/**/*.html',
-        bower: [BOWER_HOME + '/**/*.css', '!' + BOWER_HOME + '/**/*.min.css']
+        js     : PUBLIC + '/js/**/*.js',
+        scss   : PUBLIC + '/scss/*.scss',
+        jade   : PUBLIC + '/**/*.jade',
+        html   : PUBLIC + '/**/*.html',
+        bower  : [BOWER_HOME + '/**/*.css', '!' + BOWER_HOME + '/**/*.min.css']
     },
 
     dest: {
-        css: DIST + '/css' ,
-        js: DIST + '/js',
-        vendor: DIST + '/vendor'
+        js     : DIST + '/js',
+        css    : DIST + '/css' ,
+        vendor : DIST + '/vendor'
     }
 };
 
@@ -51,7 +51,7 @@ var PATHS = {
 var jsStream = function() {
     return browserify( POINT_OF_ENTRY )
         .bundle()
-        .pipe( source('bundle.js' ))
+        .pipe( source('bundle.js' ) )
         .pipe( streamify( uglify() ) )
         .pipe( streamify( rev() ) )
         .pipe( gulp.dest( PATHS.dest.js ));
