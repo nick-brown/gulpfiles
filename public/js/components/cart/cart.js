@@ -3,6 +3,7 @@ require('angular');
 
 module.exports = angular.module('cart', [])
         .factory('cart', function() {
+            'use strict';
             var cartData = [];
 
             return {
@@ -36,6 +37,7 @@ module.exports = angular.module('cart', [])
             };
         })
         .directive('cartSummary', ['cart', function(cart) {
+            'use strict';
             return {
                 restrict: 'E',
                 templateUrl: './js/components/cart/cartSummary.html',

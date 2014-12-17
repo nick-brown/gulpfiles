@@ -37,17 +37,8 @@ var models = {
 
 // ROUTES
 //==============================================================================
-app
-  .get('/', function(req, res) {
-      res.sendFile(__dirname + '/dist/index.html');
-  })
-
-  .get('/test', function(req, res) {
-      res.sendFile(__dirname + '/dist/test.html');
-  });
-
-app.get('/test', function(req, res) {
-    res.render('views/tester', { title: 'My Thing'});
+app .get('/', function(req, res) {
+    res.sendFile(__dirname + '/dist/index.html');
 });
 
 require('./app/routes')(express.Router(), app, models)

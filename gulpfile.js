@@ -29,7 +29,7 @@ var PATHS = {
         js: PUBLIC + '/js/**/*.js',
         jade: PUBLIC + '/**/*.jade',
         html: PUBLIC + '/**/*.html',
-        bower: BOWER_HOME + '**/*.css'
+        bower: BOWER_HOME + '/**/*.min.css'
     },
 
     dest: {
@@ -43,11 +43,11 @@ var PATHS = {
 // TASKS
 //==============================================================================
 gulp.task('default', [
-  'compile:js',
   'compile:css',
+  'compile:js',
   'compile:bower',
-  'publish',
   'compile:jade',
+  'publish',
   'watch'
 ]);
 
@@ -56,8 +56,9 @@ gulp.task('watch', function() {
 
     gulp.watch(PATHS.src.scss, ['compile:css']);
     gulp.watch(PATHS.src.js, ['compile:js']);
+    gulp.watch(PATHS.src.js, ['compile:bower']);
+    gulp.watch(PATHS.src.jade, ['compile:jade']);
     gulp.watch(PATHS.src.html, ['publish']);
-    gulp.watch(PATHS.src.jade, ['jade']);
 });
 
 gulp.task('jshint', function() {
@@ -91,7 +92,7 @@ gulp.task('compile:js', ['jshint'], function() {
         .pipe( source('bundle.js') ) 
         .pipe( streamify(uglify()) )
         .pipe( buffer() )
-        .pipe( rev() )
+        //.pipe( rev() )
         .pipe( gulp.dest(PATHS.dest.js) )
         
         // build manifest
@@ -105,8 +106,8 @@ gulp.task('compile:css', function() {
         .pipe( sass() )
         .pipe( csslint() )
         .pipe( csslint.reporter() )
-        .pipe( buffer() )
-        .pipe( rev() )
+        //.pipe( buffer() )
+        //.pipe( rev() )
         .pipe( gulp.dest(PATHS.dest.css) )
         .pipe( livereload() );
 });
