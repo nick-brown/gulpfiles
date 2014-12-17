@@ -12,8 +12,7 @@ var gulp = require('gulp')
 ,   livereload = require('gulp-livereload')
 ,   jade = require('gulp-jade')
 ,   rev = require('gulp-rev')
-,   buffer = require('gulp-buffer')
-,   usemin = require('gulp-usemin');
+,   buffer = require('gulp-buffer');
 
 
 // CONSTANTS
