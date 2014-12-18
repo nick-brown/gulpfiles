@@ -1,3 +1,4 @@
+/*globals __dirname, require*/
 // MODULES
 //==============================================================================
 
@@ -49,6 +50,7 @@ var PATHS = {
 //==============================================================================
 
 var jsStream = function() {
+    'use strict';
     return browserify( POINT_OF_ENTRY )
         .bundle()
         .pipe( source('bundle.js' ) )
@@ -58,6 +60,7 @@ var jsStream = function() {
 };
 
 var cssStream = function() {
+    'use strict';
    return gulp.src( PATHS.src.scss )
         .pipe( sass() )
         .pipe( csslint() )
@@ -67,6 +70,7 @@ var cssStream = function() {
 };
 
 var vendorStream = function() {
+    'use strict';
     return gulp.src( PATHS.src.bower )
         .pipe( mincss() )
         .pipe( gulp.dest( PATHS.dest.vendor ) );
@@ -86,6 +90,7 @@ gulp.task('default', [
 ]);
 
 gulp.task('watch', function() {
+    'use strict';
     var server = livereload();
 
     gulp.watch(PATHS.src.scss, ['compile:css'], server);
@@ -95,6 +100,7 @@ gulp.task('watch', function() {
 });
 
 gulp.task('lint:js', function() {
+    'use strict';
     return gulp.src( PATHS.src.js )
         .pipe( jshint() )
         .pipe( jshint.reporter('jshint-stylish') );
@@ -105,21 +111,25 @@ gulp.task('compile:js', ['lint:js'], jsStream);
 gulp.task('compile:bower', vendorStream);
 
 gulp.task('compile:jade', function() {
+    'use strict';
     return gulp.src( PATHS.src.jade )
-        .pipe( jade() )
+        .pipe( jade({ pretty: true }) )
         .pipe( gulp.dest(DIST) );
 });
 
 gulp.task('compile', ['lint:js'], function() {
-    var injector = inject( es.merge( jsStream(), cssStream(), vendorStream() ) );
+    'use strict';
+    var injector = inject( es.merge(jsStream(), cssStream(), vendorStream()), { 
+        ignorePath: '/dist' 
+    });
+
+    return gulp.src( PATHS.src.jade )
+        .pipe( injector )
+        .pipe( jade({ pretty: true }) )
+        .pipe( gulp.dest( DIST ) );
 
     // TODO: fix injector to work on html and jade simultaneously
-    //gulp.src( PATHS.src.jade )
+    //return gulp.src( PATHS.src.html )
     //    .pipe( injector )
-    //    .pipe( jade() )
     //    .pipe( gulp.dest( DIST ) );
-
-    return gulp.src( PATHS.src.html )
-        .pipe( injector )
-        .pipe( gulp.dest( DIST ) );
 });
