@@ -1,0 +1,22 @@
+doctype 
+html(lang='en', ng-app='sportStore')
+    head
+        meta(charset='UTF-8')
+        |    
+        title
+        //- inject:css
+        //- endinject
+    body
+        #container(ng-controller='MainCtrl')
+            .navbar.navbar-inverse
+                a.navbar-brand(href='#') SPORTS STORE
+                |             
+                cart-summary
+            |         
+            .alert.alert-danger(ng-show='data.error')
+                | Error ({{data.error.status}}).  The product data was not loaded.
+                a.alert-link(href='/') Click here to try again
+            |         
+            ng-include(src='"js/views/productList.html"')
+            //- inject:js
+            //- endinject
