@@ -30,11 +30,11 @@ var PUBLIC         = __dirname + '/public'
 
 var PATHS = {
     src: {
-        js     : PUBLIC + '/js/**/*.js',
-        scss   : PUBLIC + '/scss/*.scss',
-        jade   : PUBLIC + '/**/*.jade',
-        html   : PUBLIC + '/**/*.html',
-        bower  : [BOWER_HOME + '/**/*.css', '!' + BOWER_HOME + '/**/*.min.css']
+        js    : PUBLIC + '/js/**/*.js',
+        scss  : PUBLIC + '/scss/*.scss',
+        jade  : PUBLIC + '/**/*.jade',
+        html  : PUBLIC + '/**/*.html',
+        bower : [BOWER_HOME + '/**/*.css', '!' + BOWER_HOME + '/**/*.min.css']
     },
 
     dest: {
