@@ -1,11 +1,10 @@
+/*globals __dirname, process*/
 // MODULES
 //==============================================================================
 var express    = require('express')
   , app        = express()
-  , mongoose   = require('mongoose')
   , bodyParser = require('body-parser')
-  , port       = process.env.PORT || 8080
-  , jade       = require('jade');
+  , port       = process.env.PORT || 8080;
 
 
 // APP CONFIG
@@ -38,10 +37,11 @@ var models = {
 // ROUTES
 //==============================================================================
 app.get('/', function(req, res) {
+    'use strict';
     res.sendFile(__dirname + '/dist/index.html');
 });
 
-require('./app/routes')(express.Router(), app, models)
+require('./app/routes')(express.Router(), app, models);
 
 
 // KICK THE TIRES AND LIGHT THE FIRES
