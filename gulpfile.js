@@ -1,113 +1,131 @@
-var gulp = require('gulp')
+/*globals __dirname*/
+// MODULES
+//==============================================================================
+
+var gulp       = require('gulp')
 ,   browserify = require('browserify')
-,   source = require('vinyl-source-stream')
-,   sass = require('gulp-sass')
-,   gutil = require('gulp-util')
-,   uglify = require('gulp-uglify')
-,   streamify = require('gulp-streamify')
-,   concat = require('gulp-concat')
-,   jshint = require('gulp-jshint')
-,   stylish = require('jshint-stylish')
-,   csslint = require('gulp-csslint')
+,   source     = require('vinyl-source-stream')
+,   sass       = require('gulp-sass')
+,   uglify     = require('gulp-uglify')
+,   streamify  = require('gulp-streamify')
+,   jshint     = require('gulp-jshint')
+,   csslint    = require('gulp-csslint')
 ,   livereload = require('gulp-livereload')
-,   jade = require('gulp-jade')
-,   rev = require('gulp-rev')
-,   buffer = require('gulp-buffer');
+,   jade       = require('gulp-jade')
+,   rev        = require('gulp-rev')
+,   mincss     = require('gulp-minify-css')
+,   es         = require('event-stream')
+,   inject     = require('gulp-inject');
 
 
 // CONSTANTS
 //==============================================================================
 
-var PUBLIC = __dirname + '/public'
-,   DIST = __dirname + '/dist'
+var PUBLIC         = __dirname + '/public'
+,   DIST           = __dirname + '/dist'
 ,   POINT_OF_ENTRY = PUBLIC + '/js/app'
-,   BOWER_HOME = PUBLIC + '/bower_components';
+,   BOWER_HOME     = PUBLIC + '/bower_components';
 
 var PATHS = {
     src: {
-        scss: PUBLIC + '/scss/*.scss',
-        js: PUBLIC + '/js/**/*.js',
-        jade: PUBLIC + '/**/*.jade',
-        html: PUBLIC + '/**/*.html',
-        bower: BOWER_HOME + '/**/*.min.css'
+        js     : PUBLIC + '/js/**/*.js',
+        scss   : PUBLIC + '/scss/*.scss',
+        jade   : PUBLIC + '/**/*.jade',
+        html   : PUBLIC + '/**/*.html',
+        bower  : [BOWER_HOME + '/**/*.css', '!' + BOWER_HOME + '/**/*.min.css']
     },
 
     dest: {
-        css: DIST + '/css' ,
-        js: DIST + '/js',
-        vendor: DIST + '/vendor'
+        js     : DIST + '/js',
+        css    : DIST + '/css' ,
+        vendor : DIST + '/vendor'
     }
+};
+
+
+// STREAMS
+//==============================================================================
+
+var jsStream = function() {
+    'use strict';
+    return browserify( POINT_OF_ENTRY )
+        .bundle()
+        .pipe( source('bundle.js' ) )
+        .pipe( streamify( uglify() ) )
+        .pipe( streamify( rev() ) )
+        .pipe( gulp.dest( PATHS.dest.js ));
+};
+
+var cssStream = function() {
+    'use strict';
+   return gulp.src( PATHS.src.scss )
+        .pipe( sass() )
+        .pipe( csslint() )
+        .pipe( csslint.reporter() )
+        .pipe( streamify( rev() ) )
+        .pipe( gulp.dest( PATHS.dest.css ) );
+};
+
+var vendorStream = function() {
+    'use strict';
+    return gulp.src( PATHS.src.bower )
+        .pipe( mincss() )
+        .pipe( gulp.dest( PATHS.dest.vendor ) );
 };
 
 
 // TASKS
 //==============================================================================
 gulp.task('default', [
-  'compile:css',
   'compile:js',
+  'compile:css',
   'compile:bower',
-  'compile:jade',
   'publish',
+  'compile:jade',
   'watch'
 ]);
 
 gulp.task('watch', function() {
+    'use strict';
     var server = livereload();
 
-    gulp.watch(PATHS.src.scss, ['compile:css']);
-    gulp.watch(PATHS.src.js, ['compile:js']);
-    gulp.watch(PATHS.src.js, ['compile:bower']);
-    gulp.watch(PATHS.src.jade, ['compile:jade']);
-    gulp.watch(PATHS.src.html, ['publish']);
+    gulp.watch(PATHS.src.scss, ['compile:css'], server);
+    gulp.watch(PATHS.src.js, ['compile:js'], server);
+    gulp.watch(PATHS.src.html, ['publish'], server);
+    gulp.watch(PATHS.src.jade, ['jade'], server);
 });
 
-gulp.task('jshint', function() {
+gulp.task('lint:js', function() {
+    'use strict';
     return gulp.src( PATHS.src.js )
         .pipe( jshint() )
         .pipe( jshint.reporter('jshint-stylish') );
 });
 
-gulp.task('publish', function() {
-    return gulp.src( PATHS.src.html )
-        .pipe( gulp.dest(DIST) )
-        .pipe( livereload() );
-});
+gulp.task('compile:js', ['lint:js'], jsStream);
+
+gulp.task('compile:bower', vendorStream);
 
 gulp.task('compile:jade', function() {
+    'use strict';
     return gulp.src( PATHS.src.jade )
-        .pipe( jade() )
-        .pipe( gulp.dest(DIST) )
-        .pipe( livereload() );
+        .pipe( jade({ pretty: true }) )
+        .pipe( gulp.dest(DIST) );
 });
 
-gulp.task('compile:bower', function() {
-    return gulp.src( PATHS.src.bower )
-        .pipe( gulp.dest(PATHS.dest.vendor) )
-        .pipe( livereload() );
-});
+gulp.task('compile', ['lint:js'], function() {
+    'use strict';
+    var injector = inject( es.merge(jsStream(), cssStream(), vendorStream()), { 
+        ignorePath: '/dist' 
+    });
 
-gulp.task('compile:js', ['jshint'], function() {
-    return browserify( POINT_OF_ENTRY )
-        .bundle()
-        .pipe( source('bundle.js') ) 
-        .pipe( streamify(uglify()) )
-        .pipe( buffer() )
-        //.pipe( rev() )
-        .pipe( gulp.dest(PATHS.dest.js) )
-        
-        // build manifest
-        //.pipe(rev.manifest())
-        //.pipe(gulp.dest('./dist/js'))
-        .pipe( livereload() );
-});
+    return gulp.src( PATHS.src.jade )
+        .pipe( injector )
+        .pipe( jade({ pretty: true }) )
+        .pipe( gulp.dest( DIST ) );
 
-gulp.task('compile:css', function() {
-    return gulp.src( PATHS.src.scss )
-        .pipe( sass() )
-        .pipe( csslint() )
-        .pipe( csslint.reporter() )
-        //.pipe( buffer() )
-        //.pipe( rev() )
-        .pipe( gulp.dest(PATHS.dest.css) )
-        .pipe( livereload() );
+    // TODO: fix injector to work on html and jade simultaneously
+    //return gulp.src( PATHS.src.html )
+    //    .pipe( injector )
+    //    .pipe( gulp.dest( DIST ) );
 });

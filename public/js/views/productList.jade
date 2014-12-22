@@ -1,0 +1,13 @@
+.panel.panel-default.row(ng-controller="ProductListCtrl" ng-hide="data.error")
+    .col-xs-3
+        a.btn.btn-block.btn-default.btn-lg(ng-click="selectCategory()") Home
+        a.btn.btn-block.btn-default.btn-lg(ng-repeat="item in data.products | orderBy:'category' | unique:'category'" ng-click="selectCategory(item)" ng-class="getCategoryClass(item)") {{item}}
+    .col-xs-8
+        .well(ng-repeat="item in data.products | filter:categoryFilterFn | range:selectedPage:pageSize")
+            h3 
+                strong {{item.name}}
+                span.pull-right.label.label-primary {{item.price | currency}}
+            span.lead {{item.description}}
+        .pull-right.btn-group
+            a.btn.btn-default(ng-repeat="page in data.products | filter:categoryFilterFn | pageCount:pageSize" ng-click="selectedPage($index + 1)" ng-class="getPageClass($index + 1")
+                |{{$index + 1}}
