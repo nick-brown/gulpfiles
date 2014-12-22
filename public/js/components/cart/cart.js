@@ -1,6 +1,3 @@
-/*globals angular*/
-require('angular');
-
 module.exports = angular.module('cart', [])
         .factory('cart', function() {
             'use strict';

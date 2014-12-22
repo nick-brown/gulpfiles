@@ -1,4 +1,5 @@
 /*globals __dirname*/
+
 // MODULES
 //==============================================================================
 
@@ -15,6 +16,7 @@ var gulp       = require('gulp')
 ,   rev        = require('gulp-rev')
 ,   mincss     = require('gulp-minify-css')
 ,   es         = require('event-stream')
+,   gzip       = require('gulp-gzip')
 ,   inject     = require('gulp-inject');
 
 
@@ -49,10 +51,12 @@ var PATHS = {
 var jsStream = function() {
     'use strict';
     return browserify( POINT_OF_ENTRY )
+        // TODO: bundle only on production compile
         .bundle()
         .pipe( source('bundle.js' ) )
         .pipe( streamify( uglify() ) )
         .pipe( streamify( rev() ) )
+        .pipe( gzip() )
         .pipe( gulp.dest( PATHS.dest.js ));
 };
 
@@ -62,6 +66,8 @@ var cssStream = function() {
         .pipe( sass() )
         .pipe( csslint() )
         .pipe( csslint.reporter() )
+        // TODO: minify only on production compile
+        .pipe( mincss() ) 
         .pipe( streamify( rev() ) )
         .pipe( gulp.dest( PATHS.dest.css ) );
 };
@@ -76,14 +82,7 @@ var vendorStream = function() {
 
 // TASKS
 //==============================================================================
-gulp.task('default', [
-  'compile:js',
-  'compile:css',
-  'compile:bower',
-  'publish',
-  'compile:jade',
-  'watch'
-]);
+gulp.task('default', ['compile', 'watch']);
 
 gulp.task('watch', function() {
     'use strict';
@@ -91,8 +90,7 @@ gulp.task('watch', function() {
 
     gulp.watch(PATHS.src.scss, ['compile:css'], server);
     gulp.watch(PATHS.src.js, ['compile:js'], server);
-    gulp.watch(PATHS.src.html, ['publish'], server);
-    gulp.watch(PATHS.src.jade, ['jade'], server);
+    gulp.watch(PATHS.src.jade, ['compile'], server);
 });
 
 gulp.task('lint:js', function() {
@@ -104,19 +102,22 @@ gulp.task('lint:js', function() {
 
 gulp.task('compile:js', ['lint:js'], jsStream);
 
-gulp.task('compile:bower', vendorStream);
+gulp.task('compile:css', cssStream);
 
-gulp.task('compile:jade', function() {
-    'use strict';
-    return gulp.src( PATHS.src.jade )
-        .pipe( jade({ pretty: true }) )
-        .pipe( gulp.dest(DIST) );
-});
+gulp.task('compile:bower', vendorStream);
 
 gulp.task('compile', ['lint:js'], function() {
     'use strict';
+
     var injector = inject( es.merge(jsStream(), cssStream(), vendorStream()), { 
-        ignorePath: '/dist' 
+        ignorePath: '/dist',
+        transform: function(filepath, file, index, length, targetFile) {
+            console.log('filepath: ', filepath);
+            console.log('file: ', file);
+            console.log('index: ', index);
+            console.log('length: ', length);
+            console.log('targetFile: ', targetFile);
+        }
     });
 
     return gulp.src( PATHS.src.jade )

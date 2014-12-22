@@ -1,4 +1,3 @@
-/*globals angular*/
 require('angular');
 
 module.exports = function() {
