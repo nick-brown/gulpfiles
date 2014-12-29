@@ -16,17 +16,19 @@ var gulp       = require('gulp')
 ,   rev        = require('gulp-rev')
 ,   mincss     = require('gulp-minify-css')
 ,   es         = require('event-stream')
-,   gzip       = require('gulp-gzip')
-,   inject     = require('gulp-inject');
+,   inject     = require('gulp-inject')
+,   gulpif     = require('gulp-if')
+,   argv       = require('yargs').argv;
 
 
 // CONSTANTS
 //==============================================================================
 
-var PUBLIC         = __dirname + '/public'
-,   DIST           = __dirname + '/dist'
-,   POINT_OF_ENTRY = PUBLIC + '/js/app'
-,   BOWER_HOME     = PUBLIC + '/bower_components';
+var PUBLIC          = __dirname + '/public'
+,   DIST            = __dirname + '/dist'
+,   POINT_OF_ENTRY  = PUBLIC + '/js/app'
+,   BOWER_HOME      = PUBLIC + '/bower_components'
+,   PROD            = !!argv.production || !!argv.prod ? true : false;
 
 var PATHS = {
     src: {
@@ -34,7 +36,11 @@ var PATHS = {
         scss  : PUBLIC + '/scss/*.scss',
         jade  : PUBLIC + '/**/*.jade',
         html  : PUBLIC + '/**/*.html',
-        bower : [BOWER_HOME + '/**/*.css', '!' + BOWER_HOME + '/**/*.min.css']
+        bower : [
+            BOWER_HOME + '/**/*.css',
+            BOWER_HOME + '/**/*.css.map',
+            '!' + BOWER_HOME + '/**/*.min.css'
+        ]
     },
 
     dest: {
@@ -45,18 +51,17 @@ var PATHS = {
 };
 
 
+
 // STREAMS
 //==============================================================================
 
 var jsStream = function() {
     'use strict';
-    return browserify( POINT_OF_ENTRY )
-        // TODO: bundle only on production compile
+    return browserify( [POINT_OF_ENTRY], { debug: !PROD })
         .bundle()
-        .pipe( source('bundle.js' ) )
-        .pipe( streamify( uglify() ) )
+        .pipe( source('bundle.js') )
+        .pipe( gulpif( PROD, streamify( uglify() ) ) )
         .pipe( streamify( rev() ) )
-        .pipe( gzip() )
         .pipe( gulp.dest( PATHS.dest.js ));
 };
 
@@ -66,8 +71,7 @@ var cssStream = function() {
         .pipe( sass() )
         .pipe( csslint() )
         .pipe( csslint.reporter() )
-        // TODO: minify only on production compile
-        .pipe( mincss() ) 
+        .pipe( gulpif( PROD, mincss() ) )
         .pipe( streamify( rev() ) )
         .pipe( gulp.dest( PATHS.dest.css ) );
 };
@@ -75,7 +79,8 @@ var cssStream = function() {
 var vendorStream = function() {
     'use strict';
     return gulp.src( PATHS.src.bower )
-        .pipe( mincss() )
+        .pipe( gulpif( PROD, mincss() ) )
+        .pipe( streamify( rev() ) )
         .pipe( gulp.dest( PATHS.dest.vendor ) );
 };
 
@@ -86,11 +91,11 @@ gulp.task('default', ['compile', 'watch']);
 
 gulp.task('watch', function() {
     'use strict';
-    var server = livereload();
+    gulp.watch(PATHS.src.scss, ['compile:css']);
 
-    gulp.watch(PATHS.src.scss, ['compile:css'], server);
-    gulp.watch(PATHS.src.js, ['compile:js'], server);
-    gulp.watch(PATHS.src.jade, ['compile'], server);
+    gulp.watch(PATHS.src.js, ['compile:js']);
+
+    gulp.watch(PATHS.src.jade, ['compile']);
 });
 
 gulp.task('lint:js', function() {
@@ -110,20 +115,14 @@ gulp.task('compile', ['lint:js'], function() {
     'use strict';
 
     var injector = inject( es.merge(jsStream(), cssStream(), vendorStream()), { 
-        ignorePath: '/dist',
-        transform: function(filepath, file, index, length, targetFile) {
-            console.log('filepath: ', filepath);
-            console.log('file: ', file);
-            console.log('index: ', index);
-            console.log('length: ', length);
-            console.log('targetFile: ', targetFile);
-        }
+        ignorePath: '/dist'
     });
 
     return gulp.src( PATHS.src.jade )
         .pipe( injector )
-        .pipe( jade({ pretty: true }) )
-        .pipe( gulp.dest( DIST ) );
+        .pipe( jade({ pretty: !PROD }) )
+        .pipe( gulp.dest( DIST ) )
+        .pipe( livereload() );
 
     // TODO: fix injector to work on html and jade simultaneously
     //return gulp.src( PATHS.src.html )
