@@ -80,7 +80,7 @@ var vendorStream = function() {
     'use strict';
     return gulp.src( PATHS.src.bower )
         .pipe( gulpif( PROD, mincss() ) )
-        .pipe( streamify( rev() ) )
+        //.pipe( streamify( rev() ) )
         .pipe( gulp.dest( PATHS.dest.vendor ) );
 };
 
@@ -91,11 +91,7 @@ gulp.task('default', ['compile', 'watch']);
 
 gulp.task('watch', function() {
     'use strict';
-    gulp.watch(PATHS.src.scss, ['compile:css']);
-
-    gulp.watch(PATHS.src.js, ['compile:js']);
-
-    gulp.watch(PATHS.src.jade, ['compile']);
+    gulp.watch([PATHS.src.jade, PATHS.src.js, PATHS.src.scss], ['compile']);
 });
 
 gulp.task('lint:js', function() {
@@ -104,12 +100,6 @@ gulp.task('lint:js', function() {
         .pipe( jshint() )
         .pipe( jshint.reporter('jshint-stylish') );
 });
-
-gulp.task('compile:js', ['lint:js'], jsStream);
-
-gulp.task('compile:css', cssStream);
-
-gulp.task('compile:bower', vendorStream);
 
 gulp.task('compile', ['lint:js'], function() {
     'use strict';
