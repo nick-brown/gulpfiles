@@ -18,6 +18,8 @@ var gulp       = require('gulp')
 ,   es         = require('event-stream')
 ,   inject     = require('gulp-inject')
 ,   gulpif     = require('gulp-if')
+,   rimraf     = require('gulp-rimraf')
+,   ignore     = require('gulp-ignore')
 ,   argv       = require('yargs').argv;
 
 
@@ -101,7 +103,17 @@ gulp.task('lint:js', function() {
         .pipe( jshint.reporter('jshint-stylish') );
 });
 
-gulp.task('compile', ['lint:js'], function() {
+gulp.task('clean', function() {
+    'use strict';
+    return gulp.src([
+            PATHS.dest.js + '/*.js',
+            PATHS.dest.css + '/*.css'
+        ], { read: false } )
+        //.pipe( ignore( 'ignore/path/here' ) )
+        .pipe( rimraf() );
+});
+
+gulp.task('compile', ['lint:js', 'clean'], function() {
     'use strict';
 
     var injector = inject( es.merge(jsStream(), vendorStream(), cssStream()), {
