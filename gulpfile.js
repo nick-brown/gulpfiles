@@ -38,7 +38,7 @@ var PATHS = {
         html  : PUBLIC + '/**/*.html',
         bower : [
             BOWER_HOME + '/**/*.css',
-            BOWER_HOME + '/**/*.css.map',
+            '!' + BOWER_HOME + '/**/*.css.map',
             '!' + BOWER_HOME + '/**/*.min.css'
         ]
     },
