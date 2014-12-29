@@ -104,7 +104,7 @@ gulp.task('lint:js', function() {
 gulp.task('compile', ['lint:js'], function() {
     'use strict';
 
-    var injector = inject( es.merge(jsStream(), cssStream(), vendorStream()), { 
+    var injector = inject( es.merge(jsStream(), vendorStream(), cssStream()), {
         ignorePath: '/dist'
     });
 
