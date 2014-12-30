@@ -1,4 +1,4 @@
-module.exports = function($scope, $filter, productListActiveClass, productListPageCount) {
+module.exports = function($scope, $filter, productListActiveClass, productListPageCount, cart) {
     'use strict';
 
     var selectedCategory = null;
@@ -22,6 +22,10 @@ module.exports = function($scope, $filter, productListActiveClass, productListPa
 
     $scope.getPageClass = function(page) {
         return $scope.selectedPage === page ? productListActiveClass : '';
+    };
+
+    $scope.addProductToCart = function(product) {
+        cart.addProduct(product.id, product.name, product.price);
     };
 
     $scope.selectedPage = 1;

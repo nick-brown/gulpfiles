@@ -18,6 +18,7 @@
           '$filter',
           'productListActiveClass',
           'productListPageCount',
+          'cart',
           require('./controllers/productListControllers')
       ]);
 
