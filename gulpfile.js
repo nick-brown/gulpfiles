@@ -5,7 +5,11 @@
 
 var gulp       = require('gulp')
 ,   browserify = require('browserify')
-,   source     = require('vinyl-source-stream')
+,   transform  = require('vinyl-transform')
+,   series     = require('stream-series')
+,   argv       = require('yargs').argv
+,   del        = require('del')
+,   pngquant   = require('imagemin-pngquant')
 ,   sass       = require('gulp-sass')
 ,   uglify     = require('gulp-uglify')
 ,   streamify  = require('gulp-streamify')
@@ -15,32 +19,33 @@ var gulp       = require('gulp')
 ,   jade       = require('gulp-jade')
 ,   rev        = require('gulp-rev')
 ,   mincss     = require('gulp-minify-css')
-,   es         = require('event-stream')
-,   inject     = require('gulp-inject')
+,   imagemin   = require('gulp-imagemin')
 ,   gulpif     = require('gulp-if')
-,   rimraf     = require('gulp-rimraf')
-,   ignore     = require('gulp-ignore')
-,   argv       = require('yargs').argv;
+,   inject     = require('gulp-inject')
+,   concat     = require('gulp-concat')
+,   rename     = require('gulp-rename')
+,   ignore     = require('gulp-ignore');
 
 
 // CONSTANTS
 //==============================================================================
 
-var PUBLIC          = __dirname + '/public'
-,   DIST            = __dirname + '/dist'
-,   POINT_OF_ENTRY  = PUBLIC + '/js/app'
-,   BOWER_HOME      = PUBLIC + '/bower_components'
-,   PROD            = !!argv.production || !!argv.prod ? true : false;
+var PROD           = !!(!!argv.production || !!argv.prod)
+,   PUBLIC         = __dirname + '/public'
+,   DIST           = __dirname + '/dist'
+,   BOWER_HOME     = PUBLIC + '/bower_components'
+,   POINT_OF_ENTRY = PUBLIC + '/js/app.js';
 
 var PATHS = {
     src: {
         js    : PUBLIC + '/js/**/*.js',
         scss  : PUBLIC + '/scss/*.scss',
+        imgs  : PUBLIC + '/images/*',
         jade  : PUBLIC + '/**/*.jade',
         html  : PUBLIC + '/**/*.html',
         bower : [
             BOWER_HOME + '/**/*.css',
-            '!' + BOWER_HOME + '/**/*.css.map',
+            BOWER_HOME + '/**/*.css.map',
             '!' + BOWER_HOME + '/**/*.min.css'
         ]
     },
@@ -48,10 +53,10 @@ var PATHS = {
     dest: {
         js     : DIST + '/js',
         css    : DIST + '/css' ,
-        vendor : DIST + '/vendor'
+        vendor : DIST + '/vendor',
+        imgs   : DIST + '/images'
     }
 };
-
 
 
 // STREAMS
@@ -59,16 +64,20 @@ var PATHS = {
 
 var jsStream = function() {
     'use strict';
-    return browserify( [POINT_OF_ENTRY], { debug: !PROD })
-        .bundle()
-        .pipe( source('bundle.js') )
-        .pipe( gulpif( PROD, streamify( uglify() ) ) )
+    var browserified = transform(function(filename) {
+        // TODO: bundle only on production compile
+        return browserify(filename).bundle();
+    });
+
+    return gulp.src(POINT_OF_ENTRY)
+        .pipe( browserified )
+        .pipe( gulpif ( PROD, streamify( uglify() ) ) )
         .pipe( streamify( rev() ) )
         .pipe( gulp.dest( PATHS.dest.js ));
 };
 
 var cssStream = function() {
-    'use strict';
+   'use strict';
    return gulp.src( PATHS.src.scss )
         .pipe( sass() )
         .pipe( csslint() )
@@ -80,20 +89,38 @@ var cssStream = function() {
 
 var vendorStream = function() {
     'use strict';
-    return gulp.src( PATHS.src.bower )
-        .pipe( gulpif( PROD, mincss() ) )
-        //.pipe( streamify( rev() ) )
+    // Collect css map files for vendor assets
+    gulp.src( BOWER_HOME + '/**/*.css.map' )
+        .pipe( rename( {dirname: ''} ) )
         .pipe( gulp.dest( PATHS.dest.vendor ) );
+
+    return gulp.src( PATHS.src.bower )
+        .pipe( concat( 'vendor.css' ) )
+        .pipe( gulpif( PROD, mincss() ) )
+        .pipe( gulp.dest( PATHS.dest.vendor ) );
+};
+
+var imageStream = function() {
+    'use strict';
+    return gulp.src( PATHS.src.imgs)
+        .pipe(imagemin({
+            progressive: true,
+            svgoPlugins: [{removeViewBox: false}],
+            use: [pngquant()]
+        }))
+        .pipe( gulp.dest( PATHS.dest.imgs ) );
 };
 
 
 // TASKS
 //==============================================================================
-gulp.task('default', ['compile', 'watch']);
+gulp.task('default', ['compile', 'imagemin', 'watch']);
 
 gulp.task('watch', function() {
     'use strict';
-    gulp.watch([PATHS.src.jade, PATHS.src.js, PATHS.src.scss], ['compile']);
+    // TODO: Allow PATHS.src.html watching without circular triggers
+    gulp.watch([PATHS.src.imgs], ['imagemin']);
+    gulp.watch([PATHS.src.scss, PATHS.src.js, PATHS.src.jade], ['compile']);
 });
 
 gulp.task('lint:js', function() {
@@ -105,29 +132,29 @@ gulp.task('lint:js', function() {
 
 gulp.task('clean', function() {
     'use strict';
-    return gulp.src([
-            PATHS.dest.js + '/*.js',
-            PATHS.dest.css + '/*.css'
-        ], { read: false } )
-        //.pipe( ignore( 'ignore/path/here' ) )
-        .pipe( rimraf() );
+    return del( DIST );
 });
+
+gulp.task('imagemin', imageStream);
 
 gulp.task('compile', ['lint:js', 'clean'], function() {
     'use strict';
 
-    var injector = inject( es.merge(jsStream(), vendorStream(), cssStream()), {
-        ignorePath: '/dist'
+    var injector = inject( series( vendorStream(), jsStream(), cssStream() ), {
+        ignorePath: '/dist' 
     });
+    
+    // minify images
+    imageStream();
 
     return gulp.src( PATHS.src.jade )
         .pipe( injector )
-        .pipe( jade({ pretty: !PROD }) )
+        .pipe( jade({ pretty: true }) )
         .pipe( gulp.dest( DIST ) )
         .pipe( livereload() );
 
     // TODO: fix injector to work on html and jade simultaneously
     //return gulp.src( PATHS.src.html )
     //    .pipe( injector )
-    //    .pipe( gulp.dest( DIST ) );
+    //    .pipe( gulp.dest( PATHS.dest.html ) );
 });
