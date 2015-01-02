@@ -9,6 +9,7 @@ var gulp       = require('gulp')
 ,   series     = require('stream-series')
 ,   argv       = require('yargs').argv
 ,   del        = require('del')
+,   server     = require('./server')
 ,   pngquant   = require('imagemin-pngquant')
 ,   sass       = require('gulp-sass')
 ,   uglify     = require('gulp-uglify')
@@ -24,6 +25,7 @@ var gulp       = require('gulp')
 ,   inject     = require('gulp-inject')
 ,   concat     = require('gulp-concat')
 ,   rename     = require('gulp-rename')
+,   gutil      = require('gulp-util')
 ,   ignore     = require('gulp-ignore');
 
 
@@ -114,13 +116,14 @@ var imageStream = function() {
 
 // TASKS
 //==============================================================================
-gulp.task('default', ['compile', 'imagemin', 'watch']);
+gulp.task('default', ['compile', 'imagemin', 'watch', 'connect']);
 
 gulp.task('watch', function() {
     'use strict';
     // TODO: Allow PATHS.src.html watching without circular triggers
     gulp.watch([PATHS.src.imgs], ['imagemin']);
     gulp.watch([PATHS.src.scss, PATHS.src.js, PATHS.src.jade], ['compile']);
+    // TODO: Use nodemon to reload server on server.js changes
 });
 
 gulp.task('lint:js', function() {
@@ -133,6 +136,14 @@ gulp.task('lint:js', function() {
 gulp.task('clean', function() {
     'use strict';
     return del( DIST );
+});
+
+gulp.task('connect', function() {
+    'use strict';
+    server.listen( server.get('port'), function() {
+        var msg = 'Node server started.  Listening on port ' + server.get('port') + '...';
+        gutil.log( gutil.colors.cyan(msg) );
+    });
 });
 
 gulp.task('imagemin', imageStream);

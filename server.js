@@ -13,6 +13,7 @@ app.use(express.static(__dirname + '/dist'));
 
 app.set('views', __dirname);
 app.set('view engine', 'jade');
+app.set('port', port);
 
 // MIDDLEWARE
 //==============================================================================
@@ -46,5 +47,4 @@ require('./app/routes')(express.Router(), app, models);
 
 // KICK THE TIRES AND LIGHT THE FIRES
 //==============================================================================
-app.listen(port);
-console.log('Node server started.  Listening on port ' + port + '...');
+module.exports = app;
