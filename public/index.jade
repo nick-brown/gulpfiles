@@ -15,7 +15,6 @@ html(lang='en', ng-app='sportStore')
             .alert.alert-danger(ng-show='data.error')
                 | Error ({{data.error.status}}).  The product data was not loaded.
                 a.alert-link(href='/') Click here to try again
-            |         
-            ng-include(src='"js/views/productList.html"')
+            ng-view/
             //- inject:js
             //- endinject
