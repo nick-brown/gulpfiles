@@ -19,6 +19,8 @@ module.exports = angular.module('cart', [])
                     }
                 },
 
+                // TODO: write decrementProduct method
+
                 removeProduct: function(id) {
                     for(var i = 0, len = cartData.length; i < len; i++) {
                         if(cartData[i].id === id) {

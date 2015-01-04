@@ -15,4 +15,13 @@ module.exports = function($scope, cart) {
     $scope.remove = function(id) {
         cart.removeProduct(id);
     };
+
+    $scope.increment = function(item) {
+        cart.addProduct(item.id, item.name, item.price);
+    };
+
+    $scope.decrement = function(id) {
+        // TODO: Wire this up
+        cart.decrementProduct(id);
+    };
 };

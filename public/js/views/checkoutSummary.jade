@@ -14,7 +14,12 @@ div(ng-controller="CartSummaryCtrl")
                     th.text-right Subtotal
             tbody
                 tr(ng-repeat="item in cartData")
-                    td.text-center {{item.count}}
+                    td.text-center
+                        button.btn.btn-danger.btn-circle(ng-click="decrement(item.id)")
+                            span.glyphicon.glyphicon-minus(aria-hidden="true")
+                        span.item-count {{item.count}}
+                        button.btn.btn-success.btn-circle(ng-click="increment(item)")
+                            span.glyphicon.glyphicon-plus(aria-hidden="true")
                     td.text-left {{item.name}}
                     td.text-right {{item.price | currency}}
                     td.text-right {{ (item.price * item.count) | currency}}
