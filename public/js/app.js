@@ -33,6 +33,7 @@
   //===========================================================================
   app
     .controller('MainCtrl', ['$scope', '$http', 'dataUrl', require('./controllers/mainController')])
+    .controller('CartSummaryCtrl', ['$scope', 'cart', require('./controllers/cartSummaryController')])
     .controller('ProductListCtrl', [
         '$scope',
         '$filter',

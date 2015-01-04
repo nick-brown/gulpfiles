@@ -25,7 +25,7 @@ module.exports = function($scope, $filter, productListActiveClass, productListPa
     };
 
     $scope.addProductToCart = function(product) {
-        cart.addProduct(product.id, product.name, product.price);
+        cart.addProduct(product._id, product.name, product.price);
     };
 
     $scope.selectedPage = 1;

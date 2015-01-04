@@ -7,7 +7,7 @@ module.exports = angular.module('cart', [])
                 addProduct: function(id, name, price) {
                     var addToExistingItem = false;
                     // TODO: refactor this to reduce repetition
-                    for(var i = 0, len = cartData.lenth; i < len; i++) {
+                    for(var i = 0, len = cartData.length; i < len; i++) {
                         if(cartData[i].id === id) {
                             cartData[i].count++;
                             addToExistingItem = true;
@@ -20,7 +20,7 @@ module.exports = angular.module('cart', [])
                 },
 
                 removeProduct: function(id) {
-                    for(var i = 0, len = cartData.lenth; i < len; i++) {
+                    for(var i = 0, len = cartData.length; i < len; i++) {
                         if(cartData[i].id === id) {
                             cartData.splice(i, 1);
                             break;
