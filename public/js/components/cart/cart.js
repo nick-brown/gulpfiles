@@ -6,7 +6,7 @@ module.exports = angular.module('cart', [])
             return {
                 addProduct: function(id, name, price) {
                     var addToExistingItem = false;
-                    // TODO: refactor this to reduce repetition
+
                     for(var i = 0, len = cartData.length; i < len; i++) {
                         if(cartData[i].id === id) {
                             cartData[i].count++;
@@ -14,12 +14,22 @@ module.exports = angular.module('cart', [])
                             break;
                         }
                     }
+
                     if(!addToExistingItem) {
                         cartData.push({ count: 1, id: id, price: price, name: name });
                     }
                 },
 
-                // TODO: write decrementProduct method
+                decrementProduct: function(id) {
+                    for(var i = 0, len = cartData.length; i < len; i++) {
+                        if(cartData[i].id === id) {
+                            if(--cartData[i].count === 0) {
+                                this.removeProduct(id);
+                            }
+                            break;
+                        }
+                    }
+                },
 
                 removeProduct: function(id) {
                     for(var i = 0, len = cartData.length; i < len; i++) {
