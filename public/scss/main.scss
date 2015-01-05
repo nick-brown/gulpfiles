@@ -24,3 +24,7 @@ body {
 .item-count {
     margin: 1px 3px 0 5px;
 }
+
+.ng-invalid { background-color: #ffeff1; }
+.ng-valid { background-color: #d7ead7; }
+span.error { color: red; font-weight:bold; }

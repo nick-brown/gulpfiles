@@ -1,0 +1,25 @@
+h2 Check out now
+p Please enter your details and we'll ship your goods right away!
+
+//- form allows angular to validate inputs
+//- name creates variable to test for form validity 
+//- novalidate prevents browser validation
+form(name="shippingForm" novalidate)
+    .well
+        h3 Ship To
+        .form-group
+            label Name
+            //- Required attribute tells AngularJS to require a user value
+            input.form-control(name="name" ng-model="data.shipping.name" required)
+            span.error(ng-show="shippingForm.name.$error.required")  Please enter a name
+
+        h3 Address
+        .form-group
+            label Street Address
+            //- Required attribute tells AngularJS to require a user value
+            input.form-control(name="street" ng-model="data.shipping.street" required)
+            span.error(ng-show="shippingForm.street.$error.required")  Please enter a street address
+
+        .text-center
+            //- Enable button if the form is valid
+            button.btn.btn-primary(ng-disabled="shippingForm.$invalid") Complete Order

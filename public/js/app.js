@@ -16,8 +16,16 @@
     // takes a function which is executed when the module is loaded but before
     // the application is executed -- good for one-off configuration tasks
     .config(function($routeProvider) {
+        $routeProvider.when('/complete', {
+            templateUrl: '/js/views/thankYou.html'
+        });
+
         $routeProvider.when('/checkout', {
             templateUrl: '/js/views/checkoutSummary.html'
+        });
+
+        $routeProvider.when('/placeorder', {
+            templateUrl: '/js/views/placeOrder.html'
         });
 
         $routeProvider.when('/products', {
@@ -34,6 +42,7 @@
   app
     .controller('MainCtrl', ['$scope', '$http', 'dataUrl', require('./controllers/mainController')])
     .controller('CartSummaryCtrl', ['$scope', 'cart', require('./controllers/cartSummaryController')])
+    .controller('CheckoutCtrls', ['$scope', 'cart', require('./controllers/checkoutControllers')])
     .controller('ProductListCtrl', [
         '$scope',
         '$filter',
