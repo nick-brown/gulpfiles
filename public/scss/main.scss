@@ -10,12 +10,14 @@ body {
   height: 20px;
   text-align: center;
   padding: 0;
-  font-size: 20px;
+  font-size: 9px;
   border-radius: 15px;
 
-  .glyphicon {
-    position: relative;
-    top: -6px;
+  // Remove blue outline from button focus/active
+  &:focus, &:active:focus {
+    border-color: none;
+    box-shadow: none;
+    outline: 0 none;
   }
 }
 
