@@ -40,7 +40,15 @@
   // Controllers
   //===========================================================================
   app
-    .controller('MainCtrl', ['$scope', '$http', 'dataUrl', require('./controllers/mainController')])
+    .controller('MainCtrl', [
+        '$scope',
+        '$http',
+        '$location',
+        'dataUrl',
+        'orderUrl',
+        'cart',
+        require('./controllers/mainController')
+    ])
     .controller('CartSummaryCtrl', ['$scope', 'cart', require('./controllers/cartSummaryController')])
     .controller('CheckoutCtrls', ['$scope', 'cart', require('./controllers/checkoutControllers')])
     .controller('ProductListCtrl', [
@@ -58,5 +66,6 @@
   app
     .constant('productListPageCount', 3)
     .constant('dataUrl', 'http://localhost:8080/api/products')
+    .constant('orderUrl', 'http://localhost:8080/api/orders')
     .constant('productListActiveClass', 'btn-primary');
 }());

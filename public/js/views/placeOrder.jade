@@ -14,12 +14,34 @@ form(name="shippingForm" novalidate)
             span.error(ng-show="shippingForm.name.$error.required")  Please enter a name
 
         h3 Address
+        //- TODO: Create custom directive for repetetive form elements
         .form-group
             label Street Address
             //- Required attribute tells AngularJS to require a user value
             input.form-control(name="street" ng-model="data.shipping.street" required)
             span.error(ng-show="shippingForm.street.$error.required")  Please enter a street address
 
+        .form-group
+            label State
+            input.form-control(name="state" ng-model="data.shipping.state" required)
+            span.error(ng-show="shippingForm.state.$error.required")  Please enter a state
+
+        .form-group
+            label Zip
+            input.form-control(name="zip" ng-model="data.shipping.zip" required)
+            span.error(ng-show="shippingForm.zip.$error.required")  Please enter a zip code
+
+        .form-group
+            label Country
+            input.form-control(name="country" ng-model="data.shipping.country" required)
+            span.error(ng-show="shippingForm.country.$error.required")  Please enter a country
+
+        h3 Options
+        .checkbox
+            label
+                input(name="giftwrap" type="checkbox" ng-model="data.shipping.giftwrap")
+                |Gift wrap these items
+
         .text-center
             //- Enable button if the form is valid
-            button.btn.btn-primary(ng-disabled="shippingForm.$invalid") Complete Order
+            button.btn.btn-primary(ng-click="sendOrder(data.shipping)" ng-disabled="shippingForm.$invalid") Complete Order

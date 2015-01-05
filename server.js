@@ -31,7 +31,8 @@ db.connect();
 
 // MODELS
 var models = {
-    Product: require('./app/models/product')
+    Product: require('./app/models/product'),
+    Order: require('./app/models/order')
 };
 
 
