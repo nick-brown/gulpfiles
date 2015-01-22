@@ -97,7 +97,7 @@ var vendorStream = function() {
         .pipe( rename( {dirname: ''} ) )
         .pipe( gulp.dest( PATHS.dest.vendor ) );
 
-    gulp.src( BOWER_HOME + '/bootstrap/fonts/**/*.*')
+    gulp.src( BOWER_HOME + '/bootstrap/fonts/**/*.*' )
         .pipe( gulp.dest( PATHS.dest.fonts ) );
 
     return gulp.src( PATHS.src.bower )
